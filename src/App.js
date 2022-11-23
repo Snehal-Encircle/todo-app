@@ -1,24 +1,51 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import AddIteam from './My component/AddIteam';
+import Desk from './My component/Desk';
 
 function App() {
+  let initDes;
+  if (localStorage.getItem('desk') === null) {
+    initDes = [];
+  } else {
+    initDes = JSON.parse(localStorage.getItem('desk'));
+  }
+
+  const onDelete = (des) => {
+    console.log('I am onDelete of des', des);
+    setDesk(
+      desk.filter((e) => {
+        return e !== des;
+      })
+    );
+    localStorage.setItem('desk', JSON.stringify(desk));
+  };
+  const addIteam = (title, desc) => {
+    console.log('Add this iteam on Desk', title, desc);
+    let sno;
+    if (desk.length === 0) {
+      sno = 0;
+    } else {
+      sno = desk[desk.length - 1].sno + 1;
+    }
+    const myIteam = {
+      sno: sno,
+      title: title,
+      desc: desc,
+    };
+    setDesk([...desk, myIteam]);
+    console.log(myIteam);
+  };
+
+  const [desk, setDesk] = useState(initDes);
+  useEffect(() => {
+    localStorage.setItem('desk', JSON.stringify(desk));
+  }, [desk]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <AddIteam addIteam={addIteam} />
+      <Desk desk={desk} onDelete={onDelete} />
+    </>
   );
 }
 
